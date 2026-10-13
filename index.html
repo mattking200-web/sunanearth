@@ -1,0 +1,1349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Earth, Sun and Seasons Explorer</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Nunito', sans-serif;
+      user-select: none;
+      -webkit-user-select: none;
+      background: #0f172a;
+      color: #f8fafc;
+      overflow-x: hidden;
+    }
+    h1, h2, h3, .font-heading {
+      font-family: 'Fredoka', cursive;
+    }
+    /* Custom glow effects and dynamic backgrounds */
+    .sun-glow {
+      box-shadow: 0 0 50px #fbbf24, 0 0 100px #f59e0b;
+    }
+    .card-shadow {
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3), 0 8px 10px -6px rgba(0, 0, 0, 0.3);
+    }
+    /* Custom scrollbars */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #1e293b;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #475569;
+      border-radius: 4px;
+    }
+    /* Simple Pulse Animation */
+    @keyframes pulse-ring {
+      0% { transform: scale(0.95); opacity: 0.8; }
+      50% { transform: scale(1.05); opacity: 1; }
+      100% { transform: scale(0.95); opacity: 0.8; }
+    }
+    .animate-pulse-ring {
+      animation: pulse-ring 3s infinite ease-in-out;
+    }
+    .canvas-container {
+      position: relative;
+      width: 100%;
+      height: 100%;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col bg-slate-900 text-slate-100 antialiased selection:bg-amber-400 selection:text-slate-900">
+
+  <header class="bg-slate-800/90 backdrop-blur border-b border-slate-700 sticky top-0 z-50 px-4 py-3 shadow-md">
+    <div class="max-w-7xl mx-auto flex items-center justify-between">
+      <div class="flex items-center space-x-3 cursor-pointer" onclick="navigateTo('home')">
+        <div class="w-10 h-10 rounded-full bg-amber-400 flex items-center justify-center text-slate-900 font-bold text-xl shadow-lg hover:rotate-12 transition-transform">
+          🌎
+        </div>
+        <div>
+          <h1 class="text-xl sm:text-2xl font-bold tracking-wide text-amber-400 leading-none">Earth & Sun Explorer</h1>
+          <p class="text-xs text-slate-400 hidden sm:block">Grade 1 Science • Ontario Curriculum</p>
+        </div>
+      </div>
+
+      <nav class="flex items-center space-x-2">
+        <button id="homeNavBtn" onclick="navigateTo('home')" class="px-3 py-2 bg-slate-700 hover:bg-slate-600 rounded-xl text-sm font-bold flex items-center space-x-1 border border-slate-600 transition">
+          <span>🏠</span>
+          <span class="hidden md:inline">Home</span>
+        </button>
+
+        <button onclick="toggleAudioSpeech()" id="audioToggleBtn" class="px-3 py-2 bg-slate-700 hover:bg-slate-600 rounded-xl text-sm font-bold flex items-center space-x-1 border border-slate-600 transition" title="Toggle Speech Sound">
+          <span id="audioIcon">🔊</span>
+          <span class="hidden md:inline" id="audioText">Voice On</span>
+        </button>
+
+        <button onclick="toggleReducedMotion()" id="motionBtn" class="px-3 py-2 bg-slate-700 hover:bg-slate-600 rounded-xl text-sm font-bold flex items-center space-x-1 border border-slate-600 transition" title="Toggle Motion">
+          <span>✨</span>
+          <span class="hidden lg:inline" id="motionText">Normal Motion</span>
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <main class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 flex flex-col justify-center">
+
+    <!-- HOME DASHBOARD VIEW -->
+    <section id="view-home" class="space-y-8 animate-fade-in">
+      <div class="text-center max-w-3xl mx-auto space-y-3">
+        <span class="px-4 py-1.5 rounded-full bg-amber-400/10 text-amber-300 border border-amber-400/30 text-xs font-bold uppercase tracking-widest">
+          Interactive Learning Module
+        </span>
+        <h2 class="text-3xl sm:text-5xl font-extrabold text-white tracking-tight">
+          Explore Our World & The Sun
+        </h2>
+        <p class="text-slate-300 text-base sm:text-lg">
+          Welcome young scientist! Choose an activity below to discover why we have day, night, and changing seasons in Welland, Ontario!
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 pt-4">
+        <!-- Card 1 -->
+        <div onclick="navigateTo('act1')" class="group relative bg-slate-800 hover:bg-slate-750 border-2 border-slate-700 hover:border-amber-400/80 rounded-3xl p-6 cursor-pointer transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl flex flex-col justify-between overflow-hidden">
+          <div class="absolute -right-6 -bottom-6 text-8xl opacity-10 group-hover:opacity-20 transition-opacity">🌎</div>
+          <div>
+            <div class="w-14 h-14 rounded-2xl bg-blue-500/20 text-blue-400 flex items-center justify-center text-3xl mb-4 border border-blue-500/30">
+              🌍
+            </div>
+            <h3 class="text-2xl font-bold text-white mb-2 group-hover:text-amber-300 transition-colors">1. Day and Night</h3>
+            <p class="text-slate-400 text-sm leading-relaxed mb-4">
+              Spin the interactive 3D classroom globe! Watch how Earth spins to bring day and night to Welland, Ontario.
+            </p>
+          </div>
+          <div class="flex items-center text-amber-400 font-bold text-sm space-x-1 pt-2">
+            <span>Start Exploring</span>
+            <span>→</span>
+          </div>
+        </div>
+
+        <!-- Card 2 -->
+        <div onclick="navigateTo('act2')" class="group relative bg-slate-800 hover:bg-slate-750 border-2 border-slate-700 hover:border-amber-400/80 rounded-3xl p-6 cursor-pointer transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl flex flex-col justify-between overflow-hidden">
+          <div class="absolute -right-6 -bottom-6 text-8xl opacity-10 group-hover:opacity-20 transition-opacity">🌅</div>
+          <div>
+            <div class="w-14 h-14 rounded-2xl bg-amber-500/20 text-amber-400 flex items-center justify-center text-3xl mb-4 border border-amber-500/30">
+              ☀️
+            </div>
+            <h3 class="text-2xl font-bold text-white mb-2 group-hover:text-amber-300 transition-colors">2. Ground View</h3>
+            <p class="text-slate-400 text-sm leading-relaxed mb-4">
+              Look at the sky in Welland! Watch the Sun rise in the East and set in the West throughout a full day.
+            </p>
+          </div>
+          <div class="flex items-center text-amber-400 font-bold text-sm space-x-1 pt-2">
+            <span>Watch Sky</span>
+            <span>→</span>
+          </div>
+        </div>
+
+        <!-- Card 3 -->
+        <div onclick="navigateTo('act3')" class="group relative bg-slate-800 hover:bg-slate-750 border-2 border-slate-700 hover:border-amber-400/80 rounded-3xl p-6 cursor-pointer transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl flex flex-col justify-between overflow-hidden">
+          <div class="absolute -right-6 -bottom-6 text-8xl opacity-10 group-hover:opacity-20 transition-opacity">💫</div>
+          <div>
+            <div class="w-14 h-14 rounded-2xl bg-purple-500/20 text-purple-400 flex items-center justify-center text-3xl mb-4 border border-purple-500/30">
+              🚀
+            </div>
+            <h3 class="text-2xl font-bold text-white mb-2 group-hover:text-amber-300 transition-colors">3. Earth's Journey</h3>
+            <p class="text-slate-400 text-sm leading-relaxed mb-4">
+              Fly up into space! Travel along Earth's orbit around the Sun to see how our tilted axis creates four seasons.
+            </p>
+          </div>
+          <div class="flex items-center text-amber-400 font-bold text-sm space-x-1 pt-2">
+            <span>Orbit Space</span>
+            <span>→</span>
+          </div>
+        </div>
+
+        <!-- Card 4 -->
+        <div onclick="navigateTo('act4')" class="group relative bg-slate-800 hover:bg-slate-750 border-2 border-slate-700 hover:border-amber-400/80 rounded-3xl p-6 cursor-pointer transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl flex flex-col justify-between overflow-hidden">
+          <div class="absolute -right-6 -bottom-6 text-8xl opacity-10 group-hover:opacity-20 transition-opacity">🍂</div>
+          <div>
+            <div class="w-14 h-14 rounded-2xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-3xl mb-4 border border-emerald-500/30">
+              🌸
+            </div>
+            <h3 class="text-2xl font-bold text-white mb-2 group-hover:text-amber-300 transition-colors">4. Seasons in Welland</h3>
+            <p class="text-slate-400 text-sm leading-relaxed mb-4">
+              Explore Spring, Summer, Fall, and Winter in Welland, Ontario with clean visuals, daylight meters, and local weather.
+            </p>
+          </div>
+          <div class="flex items-center text-amber-400 font-bold text-sm space-x-1 pt-2">
+            <span>See Seasons</span>
+            <span>→</span>
+          </div>
+        </div>
+
+        <!-- Card 5 (Quiz) -->
+        <div onclick="navigateTo('act5')" class="group relative bg-gradient-to-br from-amber-500/20 to-orange-600/20 hover:from-amber-500/30 hover:to-orange-600/30 border-2 border-amber-500/50 hover:border-amber-400 rounded-3xl p-6 cursor-pointer transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl flex flex-col justify-between overflow-hidden sm:col-span-2 lg:col-span-2">
+          <div class="absolute -right-6 -bottom-6 text-9xl opacity-15 group-hover:opacity-25 transition-opacity">⭐</div>
+          <div>
+            <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-amber-400 text-slate-900 font-bold text-xs mb-3">
+              <span>CHALLENGE</span>
+            </div>
+            <h3 class="text-3xl font-extrabold text-amber-300 mb-2">5. Let's Practice Quiz!</h3>
+            <p class="text-slate-200 text-base leading-relaxed max-w-xl mb-4">
+              Test your knowledge! Answer 10 fun Grade 1 science questions, earn golden stars, and celebrate your mastery!
+            </p>
+          </div>
+          <div class="flex items-center text-amber-300 font-bold text-base space-x-2 pt-2">
+            <span class="px-4 py-2 bg-amber-400 text-slate-900 rounded-xl shadow-md group-hover:bg-amber-300 transition-colors">Take Quiz Now</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="view-act1" class="hidden space-y-4">
+      <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-700 pb-3">
+        <div class="flex items-center space-x-3">
+          <h2 class="text-2xl sm:text-3xl font-bold text-amber-400">Activity 1: Day and Night</h2>
+          <button onclick="speakText('Activity 1: Day and Night. Spin the classroom globe to see how day and night happen in Welland, Ontario.')" class="p-2 bg-slate-800 hover:bg-slate-700 rounded-xl border border-slate-600 text-amber-300" title="Read Aloud">🔊</button>
+        </div>
+        <button onclick="navigateTo('home')" class="text-sm font-bold bg-slate-800 hover:bg-slate-700 px-4 py-2 rounded-xl border border-slate-700 text-slate-300">← Main Menu</button>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch">
+        <!-- Interactive Canvas Area -->
+        <div class="lg:col-span-2 bg-slate-800 border-2 border-slate-700 rounded-3xl p-4 flex flex-col justify-between relative shadow-xl min-h-[420px]">
+          <div class="canvas-container flex-1 bg-slate-950 rounded-2xl overflow-hidden relative border border-slate-800 flex items-center justify-center">
+            <canvas id="globeCanvas" class="w-full h-full cursor-grab active:cursor-grabbing"></canvas>
+
+            <!-- On-Canvas Labels -->
+            <div class="absolute top-4 left-4 bg-amber-500/80 backdrop-blur px-3 py-1 rounded-full text-slate-950 font-bold text-xs shadow-md">
+              ☀️ SUNLIGHT
+            </div>
+            <div id="wellandStatusTag" class="absolute top-4 right-4 bg-slate-900/90 backdrop-blur border border-slate-700 px-4 py-1.5 rounded-2xl text-xs font-bold text-amber-300 shadow-md flex items-center space-x-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping"></span>
+              <span id="wellandStateText">Welland status: DAYTIME</span>
+            </div>
+
+            <!-- Floating Label Overlay -->
+            <div class="absolute bottom-3 left-3 right-3 flex justify-between pointer-events-none text-xs font-bold text-slate-400">
+              <span class="bg-slate-900/80 px-2.5 py-1 rounded-lg border border-slate-800">Sun Illuminates Left Side</span>
+              <span class="bg-slate-900/80 px-2.5 py-1 rounded-lg border border-slate-800">Earth Rotates Counter-Clockwise</span>
+            </div>
+          </div>
+
+          <!-- Controls Bar -->
+          <div class="mt-4 flex flex-wrap items-center justify-between gap-3 bg-slate-900/80 p-3 rounded-2xl border border-slate-700/80">
+            <div class="flex items-center space-x-2">
+              <button id="act1PlayBtn" onclick="toggleAct1Spin()" class="px-4 py-2 bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold rounded-xl shadow-md transition">⏸️ Pause</button>
+              <button onclick="resetAct1Globe()" class="px-3 py-2 bg-slate-700 hover:bg-slate-600 text-slate-200 font-bold rounded-xl border border-slate-600 transition">🔄 Reset</button>
+            </div>
+
+            <div class="flex items-center space-x-3">
+              <span class="text-xs font-bold text-slate-400">Spin Speed:</span>
+              <input type="range" id="act1SpeedSlider" min="0.2" max="3" step="0.2" value="1" class="w-24 accent-amber-400 cursor-pointer">
+            </div>
+
+            <button onclick="highlightWellandRotation()" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl shadow-lg border border-indigo-400/30 transition flex items-center space-x-1">
+              <span>📍 What happens to Welland?</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Info Sidebar -->
+        <div class="bg-slate-800 border-2 border-slate-700 rounded-3xl p-6 flex flex-col justify-between space-y-4 shadow-xl">
+          <div class="space-y-4">
+            <div class="flex items-center space-x-2">
+              <span class="text-2xl">🎓</span>
+              <h3 class="text-xl font-bold text-amber-300">Key Observation</h3>
+            </div>
+            
+            <p id="act1Explanation" class="text-slate-300 text-sm leading-relaxed bg-slate-900/60 p-4 rounded-2xl border border-slate-700/60">
+              Earth spins around like a globe on a stand! The side facing the Sun gets light and experiences <strong class="text-amber-300">DAY</strong>. The side turned away is in shadow and experiences <strong class="text-indigo-300">NIGHT</strong>.
+            </p>
+
+            <div class="space-y-3 pt-2">
+              <div class="p-3 bg-slate-900/80 rounded-2xl border border-slate-700 flex items-center justify-between">
+                <span class="text-xs font-bold text-slate-400">Axial Tilt:</span>
+                <span class="text-sm font-bold text-emerald-400">23.5° Tilted Stand</span>
+              </div>
+              <div class="p-3 bg-slate-900/80 rounded-2xl border border-slate-700 flex items-center justify-between">
+                <span class="text-xs font-bold text-slate-400">Pin Location:</span>
+                <span class="text-sm font-bold text-amber-300">Welland, ON (Canada)</span>
+              </div>
+              <div class="p-3 bg-slate-900/80 rounded-2xl border border-slate-700 flex items-center justify-between">
+                <span class="text-xs font-bold text-slate-400">Full Rotation:</span>
+                <span class="text-sm font-bold text-sky-300">24 Hours (1 Day)</span>
+              </div>
+            </div>
+          </div>
+
+          <button onclick="speakText(document.getElementById('act1Explanation').innerText)" class="w-full py-3 bg-slate-700 hover:bg-slate-600 rounded-2xl border border-slate-600 font-bold text-amber-300 text-sm flex items-center justify-center space-x-2 shadow-md">
+            <span>🔊 Read Lesson Aloud</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <section id="view-act2" class="hidden space-y-4">
+      <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-700 pb-3">
+        <div class="flex items-center space-x-3">
+          <h2 class="text-2xl sm:text-3xl font-bold text-amber-400">Activity 2: Ground View in Welland</h2>
+          <button onclick="speakText('Activity 2: Ground View in Welland. Watch how the Sun appears to move across the sky from East to West as Earth rotates.')" class="p-2 bg-slate-800 hover:bg-slate-700 rounded-xl border border-slate-600 textamber-300" title="Read Aloud">🔊</button>
+        </div>
+        <button onclick="navigateTo('home')" class="text-sm font-bold bg-slate-800 hover:bg-slate-700 px-4 py-2 rounded-xl border border-slate-700 text-slate-300">← Main Menu</button>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div class="lg:col-span-2 bg-slate-800 border-2 border-slate-700 rounded-3xl p-4 flex flex-col justify-between space-y-4 shadow-xl">
+          <!-- Sky Horizon Canvas -->
+          <div class="canvas-container h-[340px] bg-sky-900 rounded-2xl overflow-hidden relative border border-slate-800">
+            <canvas id="groundCanvas" class="w-full h-full"></canvas>
+            
+            <!-- Time Indicator Overlay -->
+            <div class="absolute top-4 left-4 bg-slate-900/80 backdrop-blur px-4 py-2 rounded-2xl border border-slate-700 text-xs font-bold text-amber-300 flex items-center space-x-2">
+              <span id="groundTimeIcon">🌅</span>
+              <span id="groundTimeLabel">Time: 06:00 AM (Morning)</span>
+            </div>
+          </div>
+
+          <!-- Controls -->
+          <div class="space-y-3 bg-slate-900/80 p-4 rounded-2xl border border-slate-700">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Time of Day Control</span>
+              <span id="timeSliderValText" class="text-xs font-bold text-amber-300">12:00 PM (Noon)</span>
+            </div>
+
+            <input type="range" id="timeSlider" min="0" max="24" step="0.1" value="12" class="w-full accent-amber-400 cursor-pointer" oninput="updateGroundViewFromSlider()">
+
+            <div class="flex flex-wrap items-center justify-between gap-2 pt-2">
+              <div class="flex items-center space-x-2">
+                <button id="act2AnimateBtn" onclick="toggleGroundAnimation()" class="px-4 py-2 bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold rounded-xl shadow-md transition">
+                  ▶️ Show Whole Day
+                </button>
+                <button onclick="setGroundTime(6)" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 rounded-xl text-xs font-bold border border-slate-700">Morning</button>
+                <button onclick="setGroundTime(12)" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 rounded-xl text-xs font-bold border border-slate-700">Noon</button>
+                <button onclick="setGroundTime(18)" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 rounded-xl text-xs font-bold border border-slate-700">Evening</button>
+                <button onclick="setGroundTime(24)" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 rounded-xl text-xs font-bold border border-slate-700">Night</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-slate-800 border-2 border-slate-700 rounded-3xl p-6 flex flex-col justify-between space-y-4 shadow-xl">
+          <div class="space-y-4">
+            <div class="flex items-center space-x-2">
+              <span class="text-2xl">🌅</span>
+              <h3 class="text-xl font-bold text-amber-300">Apparent Motion</h3>
+            </div>
+            
+            <p id="act2Explanation" class="text-slate-300 text-sm leading-relaxed bg-slate-900/60 p-4 rounded-2xl border border-slate-700/60">
+              The Sun seems to rise in the <strong class="text-amber-300">EAST</strong> in the morning, climb high at noon, and set in the <strong class="text-orange-400">WEST</strong> in the evening. But remember: the Sun isn't moving around us—Earth is spinning!
+            </p>
+
+            <div class="space-y-2 text-xs font-semibold">
+              <div class="p-3 bg-amber-500/10 border border-amber-500/30 rounded-xl text-amber-200">
+                ☀️ <strong>Morning:</strong> Sun rises in the East.
+              </div>
+              <div class="p-3 bg-sky-500/10 border border-sky-500/30 rounded-xl text-sky-200">
+                🌤️ <strong>Afternoon:</strong> Sun is highest in the sky.
+              </div>
+              <div class="p-3 bg-indigo-500/10 border border-indigo-500/30 rounded-xl text-indigo-200">
+                🌙 <strong>Night:</strong> We face away from the Sun into dark space.
+              </div>
+            </div>
+          </div>
+
+          <button onclick="speakText(document.getElementById('act2Explanation').innerText)" class="w-full py-3 bg-slate-700 hover:bg-slate-600 rounded-2xl border border-slate-600 font-bold text-amber-300 text-sm flex items-center justify-center space-x-2 shadow-md">
+            <span>🔊 Read Explanation</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <section id="view-act3" class="hidden space-y-4">
+      <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-700 pb-3">
+        <div class="flex items-center space-x-3">
+          <h2 class="text-2xl sm:text-3xl font-bold text-amber-400">Activity 3: Earth's Journey Around the Sun</h2>
+          <button onclick="speakText('Activity 3: Earth\'s Journey Around the Sun. Watch Earth orbit the Sun with its tilted axis maintaining the same direction in space.')" class="p-2 bg-slate-800 hover:bg-slate-700 rounded-xl border border-slate-600 text-amber-300" title="Read Aloud">🔊</button>
+        </div>
+        <button onclick="navigateTo('home')" class="text-sm font-bold bg-slate-800 hover:bg-slate-700 px-4 py-2 rounded-xl border border-slate-700 text-slate-300">← Main Menu</button>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div class="lg:col-span-2 bg-slate-800 border-2 border-slate-700 rounded-3xl p-4 flex flex-col justify-between space-y-4 shadow-xl">
+          <div class="canvas-container h-[380px] bg-slate-950 rounded-2xl overflow-hidden relative border border-slate-800 flex items-center justify-center">
+            <canvas id="orbitCanvas" class="w-full h-full"></canvas>
+
+            <div class="absolute top-4 left-4 bg-slate-900/80 backdrop-blur border border-slate-700 px-4 py-2 rounded-2xl text-xs font-bold text-amber-300 flex items-center space-x-2">
+              <span>📅 Season in Welland:</span>
+              <span id="orbitSeasonLabel" class="text-emerald-400 font-extrabold text-sm">SUMMER</span>
+            </div>
+          </div>
+
+          <div class="flex flex-wrap items-center justify-between gap-3 bg-slate-900/80 p-3 rounded-2xl border border-slate-700">
+            <div class="flex items-center space-x-2">
+              <button id="act3PlayBtn" onclick="toggleOrbitAnimation()" class="px-4 py-2 bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold rounded-xl shadow-md transition">⏸️ Pause Orbit</button>
+            </div>
+
+            <div class="flex items-center space-x-2 flex-1 max-w-xs">
+              <span class="text-xs font-bold text-slate-400">Orbit Position:</span>
+              <input type="range" id="orbitSlider" min="0" max="360" value="90" class="w-full accent-amber-400 cursor-pointer" oninput="updateOrbitFromSlider()">
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-slate-800 border-2 border-slate-700 rounded-3xl p-6 flex flex-col justify-between space-y-4 shadow-xl">
+          <div class="space-y-4">
+            <div class="flex items-center space-x-2">
+              <span class="text-2xl">💫</span>
+              <h3 class="text-xl font-bold text-amber-300">Why Seasons Change</h3>
+            </div>
+            
+            <p id="act3Explanation" class="text-slate-300 text-sm leading-relaxed bg-slate-900/60 p-4 rounded-2xl border border-slate-700/60">
+              Earth takes <strong>1 year</strong> (365 days) to travel around the Sun. Because Earth's axis is <strong class="text-amber-300">tilted at 23.5°</strong>, Welland tilts TOWARD the Sun in Summer (direct light, long days) and AWAY in Winter (indirect light, short days).
+            </p>
+
+            <div class="grid grid-cols-2 gap-2 text-xs font-bold">
+              <div onclick="setOrbitSeason('summer')" class="p-3 bg-amber-500/20 border border-amber-500/40 rounded-2xl text-amber-300 cursor-pointer hover:bg-amber-500/30 text-center">
+                ☀️ Summer<br><span class="text-[10px] text-slate-400 font-normal">Tilted Toward</span>
+              </div>
+              <div onclick="setOrbitSeason('winter')" class="p-3 bg-blue-500/20 border border-blue-500/40 rounded-2xl text-blue-300 cursor-pointer hover:bg-blue-500/30 text-center">
+                ❄️ Winter<br><span class="text-[10px] text-slate-400 font-normal">Tilted Away</span>
+              </div>
+              <div onclick="setOrbitSeason('spring')" class="p-3 bg-emerald-500/20 border border-emerald-500/40 rounded-2xl text-emerald-300 cursor-pointer hover:bg-emerald-500/30 text-center">
+                🌸 Spring<br><span class="text-[10px] text-slate-400 font-normal">Equal Light</span>
+              </div>
+              <div onclick="setOrbitSeason('fall')" class="p-3 bg-orange-500/20 border border-orange-500/40 rounded-2xl text-orange-300 cursor-pointer hover:bg-orange-500/30 text-center">
+                🍂 Fall<br><span class="text-[10px] text-slate-400 font-normal">Equal Light</span>
+              </div>
+            </div>
+          </div>
+
+          <button onclick="speakText(document.getElementById('act3Explanation').innerText)" class="w-full py-3 bg-slate-700 hover:bg-slate-600 rounded-2xl border border-slate-600 font-bold text-amber-300 text-sm flex items-center justify-center space-x-2 shadow-md">
+            <span>🔊 Read Explanation</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <section id="view-act4" class="hidden space-y-4">
+      <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-700 pb-3">
+        <div class="flex items-center space-x-3">
+          <h2 class="text-2xl sm:text-3xl font-bold text-amber-400">Activity 4: Four Seasons in Welland</h2>
+          <button onclick="speakText('Activity 4: Four Seasons in Welland. Explore how Spring, Summer, Fall, and Winter look and feel in Welland, Ontario.')" class="p-2 bg-slate-800 hover:bg-slate-700 rounded-xl border border-slate-600 text-amber-300" title="Read Aloud">🔊</button>
+        </div>
+        <button onclick="navigateTo('home')" class="text-sm font-bold bg-slate-800 hover:bg-slate-700 px-4 py-2 rounded-xl border border-slate-700 text-slate-300">← Main Menu</button>
+      </div>
+
+      <!-- Clean 4-Panel Grid without jumbled maps -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 pt-2">
+        <!-- SPRING -->
+        <div class="bg-slate-800 border-2 border-emerald-500/40 hover:border-emerald-400 rounded-3xl p-5 flex flex-col justify-between space-y-4 shadow-xl transition hover:-translate-y-1">
+          <div>
+            <div class="h-32 rounded-2xl bg-gradient-to-b from-sky-400 to-emerald-300 flex items-center justify-center text-6xl shadow-inner relative overflow-hidden">
+              🌱🌸
+              <div class="absolute bottom-2 right-2 bg-slate-900/80 text-emerald-300 px-2.5 py-0.5 rounded-full text-[10px] font-bold">SPRING</div>
+            </div>
+
+            <h3 class="text-2xl font-extrabold text-emerald-300 mt-4 mb-2">Spring</h3>
+            <p class="text-slate-300 text-xs leading-relaxed mb-3">
+              Weather gets warmer in Welland! Rain falls, flowers bloom, trees sprout green leaves, and baby animals are born.
+            </p>
+
+            <div class="space-y-2 text-xs">
+              <div class="bg-slate-900/80 p-2.5 rounded-xl border border-slate-700">
+                <span class="text-slate-400 block font-bold">Weather:</span>
+                <span class="text-emerald-300 font-semibold">Mild, Rainy & Fresh</span>
+              </div>
+              <div class="bg-slate-900/80 p-2.5 rounded-xl border border-slate-700">
+                <span class="text-slate-400 block font-bold">Daylight:</span>
+                <span class="text-emerald-300 font-semibold">Getting Longer</span>
+              </div>
+            </div>
+          </div>
+          <button onclick="speakText('Spring in Welland: Weather gets warmer, flowers bloom, and days get longer.')" class="w-full py-2 bg-slate-700 hover:bg-slate-600 rounded-xl text-emerald-300 text-xs font-bold border border-slate-600">🔊 Listen</button>
+        </div>
+
+        <!-- SUMMER -->
+        <div class="bg-slate-800 border-2 border-amber-500/40 hover:border-amber-400 rounded-3xl p-5 flex flex-col justify-between space-y-4 shadow-xl transition hover:-translate-y-1">
+          <div>
+            <div class="h-32 rounded-2xl bg-gradient-to-b from-amber-300 to-yellow-500 flex items-center justify-center text-6xl shadow-inner relative overflow-hidden">
+              ☀️🌳
+              <div class="absolute bottom-2 right-2 bg-slate-900/80 text-amber-300 px-2.5 py-0.5 rounded-full text-[10px] font-bold">SUMMER</div>
+            </div>
+
+            <h3 class="text-2xl font-extrabold text-amber-300 mt-4 mb-2">Summer</h3>
+            <p class="text-slate-300 text-xs leading-relaxed mb-3">
+              Hot sunny days in Welland! Trees are full of lush green leaves, crops grow in nearby fields, and we enjoy outdoor swimming.
+            </p>
+
+            <div class="space-y-2 text-xs">
+              <div class="bg-slate-900/80 p-2.5 rounded-xl border border-slate-700">
+                <span class="text-slate-400 block font-bold">Weather:</span>
+                <span class="text-amber-300 font-semibold">Hot & Sunny</span>
+              </div>
+              <div class="bg-slate-900/80 p-2.5 rounded-xl border border-slate-700">
+                <span class="text-slate-400 block font-bold">Daylight:</span>
+                <span class="text-amber-300 font-semibold">Longest Daylight Hours</span>
+              </div>
+            </div>
+          </div>
+          <button onclick="speakText('Summer in Welland: Hot sunny weather, full green trees, and the longest days of the year.')" class="w-full py-2 bg-slate-700 hover:bg-slate-600 rounded-xl text-amber-300 text-xs font-bold border border-slate-600">🔊 Listen</button>
+        </div>
+
+        <!-- FALL -->
+        <div class="bg-slate-800 border-2 border-orange-500/40 hover:border-orange-400 rounded-3xl p-5 flex flex-col justify-between space-y-4 shadow-xl transition hover:-translate-y-1">
+          <div>
+            <div class="h-32 rounded-2xl bg-gradient-to-b from-orange-400 to-red-500 flex items-center justify-center text-6xl shadow-inner relative overflow-hidden">
+              🍂🍁
+              <div class="absolute bottom-2 right-2 bg-slate-900/80 text-orange-300 px-2.5 py-0.5 rounded-full text-[10px] font-bold">FALL</div>
+            </div>
+
+            <h3 class="text-2xl font-extrabold text-orange-300 mt-4 mb-2">Fall / Autumn</h3>
+            <p class="text-slate-300 text-xs leading-relaxed mb-3">
+              Weather cools down. Tree leaves change to brilliant red, orange, and yellow before dropping. Time for apple harvest!
+            </p>
+
+            <div class="space-y-2 text-xs">
+              <div class="bg-slate-900/80 p-2.5 rounded-xl border border-slate-700">
+                <span class="text-slate-400 block font-bold">Weather:</span>
+                <span class="text-orange-300 font-semibold">Cool & Breezy</span>
+              </div>
+              <div class="bg-slate-900/80 p-2.5 rounded-xl border border-slate-700">
+                <span class="text-slate-400 block font-bold">Daylight:</span>
+                <span class="text-orange-300 font-semibold">Getting Shorter</span>
+              </div>
+            </div>
+          </div>
+          <button onclick="speakText('Fall in Welland: Cool crisp weather, colorful falling leaves, and harvesting apples.')" class="w-full py-2 bg-slate-700 hover:bg-slate-600 rounded-xl text-orange-300 text-xs font-bold border border-slate-600">🔊 Listen</button>
+        </div>
+
+        <!-- WINTER -->
+        <div class="bg-slate-800 border-2 border-sky-500/40 hover:border-sky-400 rounded-3xl p-5 flex flex-col justify-between space-y-4 shadow-xl transition hover:-translate-y-1">
+          <div>
+            <div class="h-32 rounded-2xl bg-gradient-to-b from-sky-200 to-blue-400 flex items-center justify-center text-6xl shadow-inner relative overflow-hidden">
+              ❄️☃️
+              <div class="absolute bottom-2 right-2 bg-slate-900/80 text-sky-300 px-2.5 py-0.5 rounded-full text-[10px] font-bold">WINTER</div>
+            </div>
+
+            <h3 class="text-2xl font-extrabold text-sky-300 mt-4 mb-2">Winter</h3>
+            <p class="text-slate-300 text-xs leading-relaxed mb-3">
+              Cold weather and snow in Welland! Trees are bare, we wear warm coats, mittens, and build snowmen outside.
+            </p>
+
+            <div class="space-y-2 text-xs">
+              <div class="bg-slate-900/80 p-2.5 rounded-xl border border-slate-700">
+                <span class="text-slate-400 block font-bold">Weather:</span>
+                <span class="text-sky-300 font-semibold">Cold & Snowy</span>
+              </div>
+              <div class="bg-slate-900/80 p-2.5 rounded-xl border border-slate-700">
+                <span class="text-slate-400 block font-bold">Daylight:</span>
+                <span class="text-sky-300 font-semibold">Shortest Daylight Hours</span>
+              </div>
+            </div>
+          </div>
+          <button onclick="speakText('Winter in Welland: Cold snowy weather, bare trees, and short daylight hours.')" class="w-full py-2 bg-slate-700 hover:bg-slate-600 rounded-xl text-sky-300 text-xs font-bold border border-slate-600">🔊 Listen</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="view-act5" class="hidden space-y-6">
+      <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-700 pb-3">
+        <div class="flex items-center space-x-3">
+          <h2 class="text-2xl sm:text-3xl font-bold text-amber-400">Activity 5: Let's Practice!</h2>
+          <button onclick="speakCurrentQuestion()" class="p-2 bg-slate-800 hover:bg-slate-700 rounded-xl border border-slate-600 text-amber-300" title="Read Question Aloud">🔊</button>
+        </div>
+        
+        <div class="flex items-center space-x-4">
+          <div class="flex items-center space-x-2 bg-slate-800 px-4 py-1.5 rounded-2xl border border-slate-700 text-xs font-bold">
+            <span class="text-slate-400">Score:</span>
+            <span id="quizScoreText" class="text-amber-300 text-base">0 / 10 ⭐</span>
+          </div>
+          <button onclick="navigateTo('home')" class="text-sm font-bold bg-slate-800 hover:bg-slate-700 px-4 py-2 rounded-xl border border-slate-700 text-slate-300">← Main Menu</button>
+        </div>
+      </div>
+
+      <!-- Quiz Card Container -->
+      <div id="quizContainer" class="max-w-2xl mx-auto bg-slate-800 border-2 border-slate-700 rounded-3xl p-6 sm:p-8 space-y-6 shadow-2xl relative overflow-hidden">
+        
+        <!-- Progress Bar -->
+        <div class="space-y-1">
+          <div class="flex justify-between text-xs font-bold text-slate-400">
+            <span id="questionNumText">Question 1 of 10</span>
+            <span id="quizPercentText">10%</span>
+          </div>
+          <div class="w-full h-3 bg-slate-900 rounded-full overflow-hidden p-0.5 border border-slate-700">
+            <div id="quizProgressBar" class="h-full bg-gradient-to-r from-amber-400 to-orange-500 rounded-full transition-all duration-300" style="width: 10%;"></div>
+          </div>
+        </div>
+
+        <!-- Question Prompt -->
+        <div class="bg-slate-900/80 p-5 rounded-2xl border border-slate-700 space-y-2">
+          <h3 id="quizQuestionText" class="text-xl sm:text-2xl font-bold text-white leading-snug">
+            What causes day and night on Earth?
+          </h3>
+        </div>
+
+        <!-- Options Container -->
+        <div id="quizOptionsContainer" class="grid grid-cols-1 gap-4">
+          <!-- Option buttons inserted dynamically -->
+        </div>
+
+        <!-- Feedback Box -->
+        <div id="quizFeedback" class="hidden p-4 rounded-2xl border text-center font-bold text-base transition-all">
+          <p id="quizFeedbackText"></p>
+        </div>
+
+        <!-- Next Question Button -->
+        <div id="quizNextBox" class="hidden flex justify-end">
+          <button onclick="nextQuizQuestion()" class="px-6 py-3 bg-amber-400 hover:bg-amber-300 text-slate-950 font-extrabold rounded-2xl shadow-lg transition">
+            Next Question →
+          </button>
+        </div>
+      </div>
+
+      <!-- Quiz Completion View (Hidden by default) -->
+      <div id="quizCompleteBox" class="hidden max-w-xl mx-auto bg-slate-800 border-2 border-amber-400/60 rounded-3xl p-8 text-center space-y-6 shadow-2xl">
+        <div class="text-7xl animate-bounce">🏆</div>
+        <h3 class="text-3xl font-extrabold text-amber-300">Fantastic Job, Scientist!</h3>
+        <p id="finalScoreMsg" class="text-slate-200 text-lg">
+          You scored 10 out of 10! You are an expert on Earth, the Sun, and Seasons!
+        </p>
+
+        <div class="flex justify-center space-x-4">
+          <button onclick="resetQuiz()" class="px-6 py-3 bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold rounded-2xl shadow-md transition">
+            🔄 Play Quiz Again
+          </button>
+          <button onclick="navigateTo('home')" class="px-6 py-3 bg-slate-700 hover:bg-slate-600 text-slate-100 font-bold rounded-2xl border border-slate-600 transition">
+            🏠 Return to Menu
+          </button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <script>
+    /* ====================================================================
+       GLOBAL STATE & SETTINGS
+       ==================================================================== */
+    let currentView = 'home';
+    let isSpeechEnabled = true;
+    let isReducedMotion = false;
+
+    // Speech synthesis instance
+    const synth = window.speechSynthesis;
+
+    function speakText(text) {
+      if (!isSpeechEnabled || !synth) return;
+      synth.cancel(); // Stop any ongoing speech
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.rate = 0.9;
+      utterance.pitch = 1.0;
+      synth.speak(utterance);
+    }
+
+    function toggleAudioSpeech() {
+      isSpeechEnabled = !isSpeechEnabled;
+      const icon = document.getElementById('audioIcon');
+      const text = document.getElementById('audioText');
+      if (isSpeechEnabled) {
+        icon.innerText = '🔊';
+        text.innerText = 'Voice On';
+        speakText('Voice synthesis turned on');
+      } else {
+        icon.innerText = '🔇';
+        text.innerText = 'Voice Off';
+        if (synth) synth.cancel();
+      }
+    }
+
+    function toggleReducedMotion() {
+      isReducedMotion = !isReducedMotion;
+      const text = document.getElementById('motionText');
+      if (isReducedMotion) {
+        text.innerText = 'Reduced Motion';
+      } else {
+        text.innerText = 'Normal Motion';
+      }
+    }
+
+    /* NAVIGATION LOGIC */
+    function navigateTo(viewId) {
+      if (synth) synth.cancel();
+
+      // Hide all views
+      ['home', 'act1', 'act2', 'act3', 'act4', 'act5'].forEach(id => {
+        const el = document.getElementById(`view-${id}`);
+        if (el) el.classList.add('hidden');
+      });
+
+      // Show requested view
+      const target = document.getElementById(`view-${viewId}`);
+      if (target) {
+        target.classList.remove('hidden');
+        currentView = viewId;
+      }
+
+      // Trigger animation frame initializations
+      if (viewId === 'act1') initAct1Globe();
+      if (viewId === 'act2') initAct2Ground();
+      if (viewId === 'act3') initAct3Orbit();
+      if (viewId === 'act5') resetQuiz();
+    }
+
+    /* ====================================================================
+       ACTIVITY 1: INTERACTIVE CLASSROOM GLOBE CANVAS
+       ==================================================================== */
+    let globeCanvas, globeCtx;
+    let globeRotation = 0; // Rotation angle in radians
+    let act1Spinning = true;
+    let act1AnimationId;
+
+    function initAct1Globe() {
+      globeCanvas = document.getElementById('globeCanvas');
+      if (!globeCanvas) return;
+      globeCtx = globeCanvas.getContext('2d');
+      resizeCanvas(globeCanvas);
+
+      if (!act1AnimationId) {
+        act1Spinning = true;
+        renderGlobeLoop();
+      }
+    }
+
+    function toggleAct1Spin() {
+      act1Spinning = !act1Spinning;
+      const btn = document.getElementById('act1PlayBtn');
+      btn.innerText = act1Spinning ? '⏸️ Pause' : '▶️ Spin Globe';
+    }
+
+    function resetAct1Globe() {
+      globeRotation = 0;
+      act1Spinning = true;
+      document.getElementById('act1PlayBtn').innerText = '⏸️ Pause';
+    }
+
+    function highlightWellandRotation() {
+      speakText('Watch Welland, Ontario rotate from sunlight on the left into nighttime shadow on the right!');
+      act1Spinning = true;
+      document.getElementById('act1PlayBtn').innerText = '⏸️ Pause';
+    }
+
+    function renderGlobeLoop() {
+      if (currentView !== 'act1') return;
+
+      const speedSlider = document.getElementById('act1SpeedSlider');
+      const speed = speedSlider ? parseFloat(speedSlider.value) : 1;
+
+      if (act1Spinning && !isReducedMotion) {
+        globeRotation += 0.015 * speed;
+      }
+
+      drawGlobeScene();
+      requestAnimationFrame(renderGlobeLoop);
+    }
+
+    function drawGlobeScene() {
+      if (!globeCtx) return;
+      const width = globeCanvas.width;
+      const height = globeCanvas.height;
+      globeCtx.clearRect(0, 0, width, height);
+
+      const centerX = width * 0.55;
+      const centerY = height * 0.52;
+      const radius = Math.min(width, height) * 0.28;
+      const tiltAngle = 23.5 * (Math.PI / 180);
+
+      // 1. Draw Classroom Stand (Base & Arc)
+      globeCtx.save();
+      
+      // Stand Base
+      globeCtx.fillStyle = '#78350f';
+      globeCtx.beginPath();
+      globeCtx.ellipse(centerX, centerY + radius + 35, radius * 0.7, 14, 0, 0, Math.PI * 2);
+      globeCtx.fill();
+      globeCtx.strokeStyle = '#451a03';
+      globeCtx.lineWidth = 3;
+      globeCtx.stroke();
+
+      // Vertical Support Pillar
+      globeCtx.fillStyle = '#b45309';
+      globeCtx.fillRect(centerX - 8, centerY + radius - 10, 16, 45);
+
+      // Curved Brass Meridian Arm
+      globeCtx.strokeStyle = '#d97706';
+      globeCtx.lineWidth = 10;
+      globeCtx.beginPath();
+      globeCtx.arc(centerX, centerY, radius + 14, -Math.PI * 0.6, Math.PI * 0.7);
+      globeCtx.stroke();
+      globeCtx.restore();
+
+      // 2. Draw Sun Rays from Left
+      globeCtx.save();
+      const sunGradient = globeCtx.createRadialGradient(0, height * 0.5, 10, 0, height * 0.5, width * 0.4);
+      sunGradient.addColorStop(0, 'rgba(251, 191, 36, 0.4)');
+      sunGradient.addColorStop(1, 'rgba(251, 191, 36, 0)');
+      globeCtx.fillStyle = sunGradient;
+      globeCtx.fillRect(0, 0, width * 0.5, height);
+      globeCtx.restore();
+
+      // 3. Draw Globe Sphere with Tilted Axis
+      globeCtx.save();
+      globeCtx.translate(centerX, centerY);
+      globeCtx.rotate(tiltAngle);
+
+      // Axis Pin Line
+      globeCtx.strokeStyle = '#94a3b8';
+      globeCtx.lineWidth = 4;
+      globeCtx.beginPath();
+      globeCtx.moveTo(0, -radius - 22);
+      globeCtx.lineTo(0, radius + 22);
+      globeCtx.stroke();
+
+      // Earth Ocean Sphere
+      const oceanGrad = globeCtx.createRadialGradient(-radius * 0.3, -radius * 0.3, radius * 0.1, 0, 0, radius);
+      oceanGrad.addColorStop(0, '#38bdf8');
+      oceanGrad.addColorStop(0.7, '#0284c7');
+      oceanGrad.addColorStop(1, '#0369a1');
+
+      globeCtx.beginPath();
+      globeCtx.arc(0, 0, radius, 0, Math.PI * 2);
+      globeCtx.fillStyle = oceanGrad;
+      globeCtx.fill();
+      globeCtx.clip(); // Clip continents inside sphere
+
+      // Render Simplistic Continents moving across
+      globeCtx.fillStyle = '#22c55e';
+      const rot = globeRotation % (Math.PI * 2);
+
+      // Simulate 3 Continents/Islands rotating horizontally
+      for (let i = 0; i < 3; i++) {
+        const offset = (rot + (i * Math.PI * 2 / 3)) % (Math.PI * 2);
+        const xPos = Math.cos(offset) * radius;
+        const visibility = Math.sin(offset);
+
+        if (visibility > -0.2) {
+          globeCtx.beginPath();
+          globeCtx.ellipse(xPos * 0.8, -radius * 0.2 + (i * 20 - 20), radius * 0.35, radius * 0.25, 0, 0, Math.PI * 2);
+          globeCtx.fill();
+        }
+      }
+
+      // 4. Welland Pin Tracker
+      // Welland sits around Northern Hemisphere (y = -radius * 0.35)
+      const wellandX = Math.cos(rot) * radius * 0.85;
+      const wellandY = -radius * 0.35;
+      const isVisibleFront = Math.sin(rot) > 0;
+
+      if (isVisibleFront) {
+        // Red Pin Marker
+        globeCtx.fillStyle = '#ef4444';
+        globeCtx.beginPath();
+        globeCtx.arc(wellandX, wellandY, 7, 0, Math.PI * 2);
+        globeCtx.fill();
+        globeCtx.strokeStyle = '#ffffff';
+        globeCtx.lineWidth = 2;
+        globeCtx.stroke();
+
+        // Pin Pulse Ring
+        globeCtx.strokeStyle = '#f87171';
+        globeCtx.beginPath();
+        globeCtx.arc(wellandX, wellandY, 12, 0, Math.PI * 2);
+        globeCtx.stroke();
+
+        // Welland Text Label
+        globeCtx.fillStyle = '#ffffff';
+        globeCtx.font = 'bold 12px Nunito';
+        globeCtx.fillText('📍 Welland, ON', wellandX + 10, wellandY + 4);
+      }
+
+      // 5. Day/Night Shadow Overlay (Sun from Left)
+      const shadowGrad = globeCtx.createLinearGradient(-radius, 0, radius, 0);
+      shadowGrad.addColorStop(0, 'rgba(0,0,0,0)');
+      shadowGrad.addColorStop(0.5, 'rgba(15,23,42,0.3)');
+      shadowGrad.addColorStop(0.85, 'rgba(15,23,42,0.85)');
+      shadowGrad.addColorStop(1, 'rgba(15,23,42,0.95)');
+
+      globeCtx.fillStyle = shadowGrad;
+      globeCtx.fillRect(-radius, -radius, radius * 2, radius * 2);
+
+      globeCtx.restore();
+
+      // Update Status UI Banner
+      const isDaytime = Math.sin(rot) > 0;
+      const statusText = document.getElementById('wellandStateText');
+      if (statusText) {
+        statusText.innerText = `Welland status: ${isDaytime ? '☀️ DAYTIME' : '🌙 NIGHTTIME'}`;
+        statusText.className = isDaytime ? 'text-amber-300 font-extrabold' : 'text-indigo-300 font-extrabold';
+      }
+    }
+
+    /* ====================================================================
+       ACTIVITY 2: GROUND HORIZON VIEW CANVAS
+       ==================================================================== */
+    let groundCanvas, groundCtx;
+    let groundTime = 12; // 0 to 24 hours
+    let isGroundAnimating = false;
+
+    function initAct2Ground() {
+      groundCanvas = document.getElementById('groundCanvas');
+      if (!groundCanvas) return;
+      groundCtx = groundCanvas.getContext('2d');
+      resizeCanvas(groundCanvas);
+      drawGroundScene();
+    }
+
+    function updateGroundViewFromSlider() {
+      const slider = document.getElementById('timeSlider');
+      if (slider) {
+        groundTime = parseFloat(slider.value);
+        drawGroundScene();
+      }
+    }
+
+    function setGroundTime(val) {
+      groundTime = val;
+      const slider = document.getElementById('timeSlider');
+      if (slider) slider.value = val;
+      drawGroundScene();
+    }
+
+    function toggleGroundAnimation() {
+      isGroundAnimating = !isGroundAnimating;
+      const btn = document.getElementById('act2AnimateBtn');
+      btn.innerText = isGroundAnimating ? '⏸️ Pause Sky' : '▶️ Show Whole Day';
+
+      if (isGroundAnimating) {
+        animateGroundLoop();
+      }
+    }
+
+    function animateGroundLoop() {
+      if (!isGroundAnimating || currentView !== 'act2') return;
+
+      groundTime += 0.08;
+      if (groundTime > 24) groundTime = 0;
+
+      const slider = document.getElementById('timeSlider');
+      if (slider) slider.value = groundTime;
+
+      drawGroundScene();
+      requestAnimationFrame(animateGroundLoop);
+    }
+
+    function drawGroundScene() {
+      if (!groundCtx) return;
+      const width = groundCanvas.width;
+      const height = groundCanvas.height;
+      groundCtx.clearRect(0, 0, width, height);
+
+      // Sky Background Gradient based on time
+      const skyGrad = groundCtx.createLinearGradient(0, 0, 0, height);
+      if (groundTime >= 6 && groundTime <= 18) {
+        // Day sky (Dawn to Dusk)
+        const dayProgress = (groundTime - 6) / 12; // 0 to 1
+        if (dayProgress < 0.2 || dayProgress > 0.8) {
+          // Dawn/Dusk orange
+          skyGrad.addColorStop(0, '#fdba74');
+          skyGrad.addColorStop(1, '#f97316');
+        } else {
+          // Daylight blue
+          skyGrad.addColorStop(0, '#38bdf8');
+          skyGrad.addColorStop(1, '#bae6fd');
+        }
+      } else {
+        // Night sky
+        skyGrad.addColorStop(0, '#0f172a');
+        skyGrad.addColorStop(1, '#1e1b4b');
+      }
+
+      groundCtx.fillStyle = skyGrad;
+      groundCtx.fillRect(0, 0, width, height);
+
+      // Stars at night
+      if (groundTime < 5 || groundTime > 19) {
+        groundCtx.fillStyle = '#ffffff';
+        for (let i = 0; i < 25; i++) {
+          const sx = (i * 37) % width;
+          const sy = (i * 19) % (height * 0.5);
+          groundCtx.fillRect(sx, sy, 2, 2);
+        }
+      }
+
+      // Sun / Moon trajectory
+      const horizonY = height * 0.72;
+      const sunAngle = ((groundTime - 6) / 12) * Math.PI; // 0 at East, PI at West
+      const sunX = (1 - (groundTime / 24)) * width; // Moves East (right) to West (left)
+      const sunY = horizonY - Math.sin((groundTime / 24) * Math.PI * 2 - Math.PI*0.5) * (height * 0.45);
+
+      // Draw Sun if during daytime
+      if (groundTime >= 5.5 && groundTime <= 18.5) {
+        groundCtx.save();
+        groundCtx.fillStyle = '#fbbf24';
+        groundCtx.shadowColor = '#f59e0b';
+        groundCtx.shadowBlur = 25;
+        groundCtx.beginPath();
+        groundCtx.arc(sunX, sunY, 24, 0, Math.PI * 2);
+        groundCtx.fill();
+        groundCtx.restore();
+      } else {
+        // Draw Moon at Night
+        groundCtx.save();
+        groundCtx.fillStyle = '#fef08a';
+        groundCtx.shadowColor = '#fef08a';
+        groundCtx.shadowBlur = 15;
+        groundCtx.beginPath();
+        groundCtx.arc(sunX, sunY, 18, 0, Math.PI * 2);
+        groundCtx.fill();
+        groundCtx.restore();
+      }
+
+      // Ground Landscape (Welland Horizon)
+      groundCtx.fillStyle = '#15803d';
+      groundCtx.beginPath();
+      groundCtx.moveTo(0, horizonY);
+      groundCtx.quadraticCurveTo(width * 0.3, horizonY - 15, width * 0.6, horizonY);
+      groundCtx.quadraticCurveTo(width * 0.8, horizonY + 10, width, horizonY);
+      groundCtx.lineTo(width, height);
+      groundCtx.lineTo(0, height);
+      groundCtx.fill();
+
+      // Horizon Labels EAST / WEST
+      groundCtx.fillStyle = '#ffffff';
+      groundCtx.font = 'bold 16px Fredoka';
+      groundCtx.fillText('🌅 EAST (Sunrise)', width * 0.75, horizonY + 35);
+      groundCtx.fillText('🌇 WEST (Sunset)', width * 0.1, horizonY + 35);
+
+      // Update Overlay Labels
+      const label = document.getElementById('groundTimeLabel');
+      const timeValText = document.getElementById('timeSliderValText');
+      const hours = Math.floor(groundTime);
+      const mins = Math.floor((groundTime - hours) * 60);
+      const formattedTime = `${hours.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}`;
+      
+      let period = 'DAYTIME';
+      if (hours < 6) period = 'NIGHT';
+      else if (hours < 11) period = 'MORNING';
+      else if (hours < 16) period = 'AFTERNOON';
+      else if (hours < 19) period = 'EVENING';
+      else period = 'NIGHT';
+
+      if (label) label.innerText = `Time: ${formattedTime} (${period})`;
+      if (timeValText) timeValText.innerText = `${formattedTime} (${period})`;
+    }
+
+    /* ====================================================================
+       ACTIVITY 3: EARTH ORBIT simulation
+       ==================================================================== */
+    let orbitCanvas, orbitCtx;
+    let orbitAngle = 90; // degrees
+    let act3Orbiting = true;
+
+    function initAct3Orbit() {
+      orbitCanvas = document.getElementById('orbitCanvas');
+      if (!orbitCanvas) return;
+      orbitCtx = orbitCanvas.getContext('2d');
+      resizeCanvas(orbitCanvas);
+      renderOrbitLoop();
+    }
+
+    function toggleOrbitAnimation() {
+      act3Orbiting = !act3Orbiting;
+      const btn = document.getElementById('act3PlayBtn');
+      btn.innerText = act3Orbiting ? '⏸️ Pause Orbit' : '▶️ Resume Orbit';
+    }
+
+    function updateOrbitFromSlider() {
+      const slider = document.getElementById('orbitSlider');
+      if (slider) {
+        orbitAngle = parseFloat(slider.value);
+        drawOrbitScene();
+      }
+    }
+
+    function setOrbitSeason(season) {
+      if (season === 'summer') orbitAngle = 90;
+      if (season === 'fall') orbitAngle = 180;
+      if (season === 'winter') orbitAngle = 270;
+      if (season === 'spring') orbitAngle = 0;
+
+      const slider = document.getElementById('orbitSlider');
+      if (slider) slider.value = orbitAngle;
+      drawOrbitScene();
+    }
+
+    function renderOrbitLoop() {
+      if (currentView !== 'act3') return;
+
+      if (act3Orbiting && !isReducedMotion) {
+        orbitAngle = (orbitAngle + 0.4) % 360;
+        const slider = document.getElementById('orbitSlider');
+        if (slider) slider.value = orbitAngle;
+      }
+
+      drawOrbitScene();
+      requestAnimationFrame(renderOrbitLoop);
+    }
+
+    function drawOrbitScene() {
+      if (!orbitCtx) return;
+      const width = orbitCanvas.width;
+      const height = orbitCanvas.height;
+      orbitCtx.clearRect(0, 0, width, height);
+
+      const centerX = width * 0.5;
+      const centerY = height * 0.5;
+      const rx = width * 0.38;
+      const ry = height * 0.32;
+
+      // 1. Orbit Ellipse Path Line
+      orbitCtx.strokeStyle = 'rgba(148, 163, 184, 0.3)';
+      orbitCtx.lineWidth = 2;
+      orbitCtx.setLineDash([6, 6]);
+      orbitCtx.beginPath();
+      orbitCtx.ellipse(centerX, centerY, rx, ry, 0, 0, Math.PI * 2);
+      orbitCtx.stroke();
+      orbitCtx.setLineDash([]);
+
+      // 2. Central Sun
+      orbitCtx.save();
+      orbitCtx.fillStyle = '#fbbf24';
+      orbitCtx.shadowColor = '#f59e0b';
+      orbitCtx.shadowBlur = 35;
+      orbitCtx.beginPath();
+      orbitCtx.arc(centerX, centerY, 30, 0, Math.PI * 2);
+      orbitCtx.fill();
+      orbitCtx.restore();
+
+      // Sun Label
+      orbitCtx.fillStyle = '#ffffff';
+      orbitCtx.font = 'bold 14px Fredoka';
+      orbitCtx.fillText('SUN', centerX - 12, centerY + 5);
+
+      // 3. Calculate Earth Position along ellipse
+      const rad = orbitAngle * (Math.PI / 180);
+      const earthX = centerX + Math.cos(rad) * rx;
+      const earthY = centerY + Math.sin(rad) * ry;
+
+      // Draw Orbiting Earth with Constant Tilted Axis
+      const earthRadius = 16;
+      const tiltAngle = 23.5 * (Math.PI / 180);
+
+      orbitCtx.save();
+      orbitCtx.translate(earthX, earthY);
+
+      // Axis Pin
+      orbitCtx.strokeStyle = '#cbd5e1';
+      orbitCtx.lineWidth = 3;
+      orbitCtx.beginPath();
+      orbitCtx.moveTo(Math.sin(tiltAngle) * 22, -Math.cos(tiltAngle) * 22);
+      orbitCtx.lineTo(-Math.sin(tiltAngle) * 22, Math.cos(tiltAngle) * 22);
+      orbitCtx.stroke();
+
+      // Earth Body
+      orbitCtx.fillStyle = '#0284c7';
+      orbitCtx.beginPath();
+      orbitCtx.arc(0, 0, earthRadius, 0, Math.PI * 2);
+      orbitCtx.fill();
+
+      // Northern Hemisphere Indicator (Welland)
+      orbitCtx.fillStyle = '#ef4444';
+      orbitCtx.beginPath();
+      orbitCtx.arc(3, -6, 3, 0, Math.PI * 2);
+      orbitCtx.fill();
+
+      orbitCtx.restore();
+
+      // Season Detection for Welland (Northern Hemisphere)
+      // Angle 90deg = Summer (Right side, tilted toward Sun)
+      // Angle 270deg = Winter (Left side, tilted away)
+      let seasonName = 'SPRING';
+      if (orbitAngle >= 45 && orbitAngle < 135) seasonName = 'SUMMER';
+      else if (orbitAngle >= 135 && orbitAngle < 225) seasonName = 'FALL';
+      else if (orbitAngle >= 225 && orbitAngle < 315) seasonName = 'WINTER';
+      else seasonName = 'SPRING';
+
+      const label = document.getElementById('orbitSeasonLabel');
+      if (label) label.innerText = seasonName;
+    }
+
+    /* Helper canvas dynamic resizer */
+    function resizeCanvas(canvas) {
+      if (!canvas) return;
+      const rect = canvas.parentElement.getBoundingClientRect();
+      canvas.width = rect.width;
+      canvas.height = rect.height;
+    }
+
+    window.addEventListener('resize', () => {
+      if (currentView === 'act1') resizeCanvas(globeCanvas);
+      if (currentView === 'act2') resizeCanvas(groundCanvas);
+      if (currentView === 'act3') resizeCanvas(orbitCanvas);
+    });
+
+    /* ====================================================================
+       ACTIVITY 5: INTERACTIVE QUIZ DATA & LOGIC
+       ==================================================================== */
+    const quizQuestions = [
+      {
+        q: "What gives Earth daylight and warmth?",
+        options: ["The Moon 🌙", "The Sun ☀️", "The Stars ⭐"],
+        correct: 1,
+        hint: "Think about the big bright object in the sky during daytime!"
+      },
+      {
+        q: "Why do we have Day and Night in Welland?",
+        options: ["The Sun turns off", "Earth spins around 🌎", "Clouds cover the sky"],
+        correct: 1,
+        hint: "Remember Activity 1: Earth rotates like a spinning globe!"
+      },
+      {
+        q: "Where does the Sun appear to rise every morning?",
+        options: ["East 🌅", "West 🌇", "North 🧭"],
+        correct: 0,
+        hint: "The Sun rises in the East and sets in the West!"
+      },
+      {
+        q: "How long does it take Earth to spin around 1 full time?",
+        options: ["1 Hour ⏱️", "24 Hours (1 Day) 🕒", "1 Year 📅"],
+        correct: 1,
+        hint: "A full spin takes 24 hours (day plus night)."
+      },
+      {
+        q: "How long does Earth take to travel all the way around the Sun?",
+        options: ["1 Week 📆", "1 Month 🌙", "1 Year (365 Days) 🗓️"],
+        correct: 2,
+        hint: "Earth's orbit around the Sun takes a whole year!"
+      },
+      {
+        q: "Which season in Welland has hot weather and the longest daylight?",
+        options: ["Summer ☀️", "Winter ❄️", "Fall 🍂"],
+        correct: 0,
+        hint: "Think of summer vacation when days are long and warm!"
+      },
+      {
+        q: "What happens to tree leaves in Welland during Fall?",
+        options: ["They turn green", "They change colors and fall off 🍁", "They turn to ice"],
+        correct: 1,
+        hint: "In Autumn, leaves turn beautiful red, orange, and yellow."
+      },
+      {
+        q: "In Winter, why is it cold in Welland, Ontario?",
+        options: ["Earth is tilted away from the Sun ❄️", "The Sun goes to sleep", "The Moon blocks all heat"],
+        correct: 0,
+        hint: "Welland tilts away from direct sunlight in Winter."
+      },
+      {
+        q: "In Spring, what changes do we observe in nature?",
+        options: ["Snowstorms everywhere", "Flowers bloom and plants grow 🌱", "Leaves drop off trees"],
+        correct: 1,
+        hint: "Spring brings fresh flowers and budding green leaves."
+      },
+      {
+        q: "Is Earth's axis straight or tilted on its globe stand?",
+        options: ["Tilted at 23.5 degrees 📐", "Completely flat 📏", "It changes every minute"],
+        correct: 0,
+        hint: "Earth has a constant tilt of 23.5 degrees!"
+      }
+    ];
+
+    let currentQuestionIdx = 0;
+    let quizScore = 0;
+    let optionAnswered = false;
+
+    function resetQuiz() {
+      currentQuestionIdx = 0;
+      quizScore = 0;
+      optionAnswered = false;
+
+      document.getElementById('quizContainer').classList.remove('hidden');
+      document.getElementById('quizCompleteBox').classList.add('hidden');
+      updateQuizScoreDisplay();
+      renderQuizQuestion();
+    }
+
+    function renderQuizQuestion() {
+      optionAnswered = false;
+      const qData = quizQuestions[currentQuestionIdx];
+
+      // Update Header & Progress Bar
+      document.getElementById('questionNumText').innerText = `Question ${currentQuestionIdx + 1} of 10`;
+      const percent = ((currentQuestionIdx + 1) / 10) * 100;
+      document.getElementById('quizPercentText').innerText = `${percent}%`;
+      document.getElementById('quizProgressBar').style.width = `${percent}%`;
+
+      // Question Text
+      document.getElementById('quizQuestionText').innerText = qData.q;
+
+      // Speak Question
+      speakCurrentQuestion();
+
+      // Hide Feedback & Next Button
+      document.getElementById('quizFeedback').classList.add('hidden');
+      document.getElementById('quizNextBox').classList.add('hidden');
+
+      // Options UI
+      const container = document.getElementById('quizOptionsContainer');
+      container.innerHTML = '';
+
+      qData.options.forEach((optText, idx) => {
+        const btn = document.createElement('button');
+        btn.className = "w-full p-4 bg-slate-700 hover:bg-slate-650 border-2 border-slate-600 hover:border-amber-400 rounded-2xl text-left font-bold text-lg text-white transition flex items-center justify-between shadow-md";
+        btn.innerHTML = `<span>${optText}</span><span class="text-slate-400 font-normal text-xs">Tap to choose</span>`;
+        btn.onclick = () => selectQuizAnswer(idx);
+        container.appendChild(btn);
+      });
+    }
+
+    function speakCurrentQuestion() {
+      const qData = quizQuestions[currentQuestionIdx];
+      speakText(`${qData.q}`);
+    }
+
+    function selectQuizAnswer(selectedIdx) {
+      if (optionAnswered) return;
+      optionAnswered = true;
+
+      const qData = quizQuestions[currentQuestionIdx];
+      const feedbackBox = document.getElementById('quizFeedback');
+      const feedbackText = document.getElementById('quizFeedbackText');
+      const nextBox = document.getElementById('quizNextBox');
+
+      feedbackBox.classList.remove('hidden');
+
+      if (selectedIdx === qData.correct) {
+        quizScore++;
+        updateQuizScoreDisplay();
+
+        feedbackBox.className = "p-4 rounded-2xl border text-center font-bold text-base bg-emerald-500/20 border-emerald-500 text-emerald-300 animate-bounce";
+        feedbackText.innerText = "🌟 Terrific! That is correct!";
+        speakText("Terrific! That is correct!");
+      } else {
+        feedbackBox.className = "p-4 rounded-2xl border text-center font-bold text-base bg-amber-500/20 border-amber-500 text-amber-300";
+        feedbackText.innerText = `💡 Good try! ${qData.hint}`;
+        speakText(`Good try! ${qData.hint}`);
+      }
+
+      nextBox.classList.remove('hidden');
+    }
+
+    function nextQuizQuestion() {
+      currentQuestionIdx++;
+      if (currentQuestionIdx < quizQuestions.length) {
+        renderQuizQuestion();
+      } else {
+        // Quiz Complete
+        document.getElementById('quizContainer').classList.add('hidden');
+        document.getElementById('quizCompleteBox').classList.remove('hidden');
+        document.getElementById('finalScoreMsg').innerText = `You scored ${quizScore} out of 10 golden stars! You are a Grade 1 Science Explorer!`;
+        speakText(`Congratulations! You scored ${quizScore} out of 10! Fantastic job!`);
+      }
+    }
+
+    function updateQuizScoreDisplay() {
+      const text = document.getElementById('quizScoreText');
+      if (text) text.innerText = `${quizScore} / 10 ⭐`;
+    }
+
+    /* Initialize Default View on Window Load */
+    window.onload = function() {
+      navigateTo('home');
+    };
+  </script>
+</body>
+</html>
